@@ -20,12 +20,11 @@ import com.app.weather.data.local.DBHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private DBHelper dbHelper;
-    private MainActivityViewModel dashboardViewModel;
+    private MainActivityViewModel mainViewModel;
     RecyclerView recycler_cities;
     CitiesAdapter adapter = null;
     BottomSheetDialog dialog;
@@ -35,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dashboardViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        mainViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         dbHelper = new DBHelper(this);
-        dashboardViewModel.initCityDetails();
+        mainViewModel.initCityDetails();
 
         initBotomSheet();
         initRecycler();
@@ -60,14 +59,14 @@ public class MainActivity extends AppCompatActivity {
         autotextView.setOnItemClickListener((adapterView, view, i, l) -> {
             Toast.makeText(MainActivity.this, cities_list[i], Toast.LENGTH_SHORT).show();
             dialog.dismiss();
-            dashboardViewModel.getCityByName(autotextView.getText().toString());
+            mainViewModel.getCityByName(autotextView.getText().toString());
             getNewCity();
             autotextView.setText("");
         });
     }
 
     private void getNewCity() {
-        dashboardViewModel.getCityDetails().observe(this, details -> {
+        mainViewModel.getCityDetails().observe(this, details -> {
 
             if (details != null) {
                 try {

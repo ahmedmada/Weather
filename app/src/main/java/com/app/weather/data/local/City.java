@@ -1,11 +1,13 @@
 package com.app.weather.data.local;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "Cities")
-public class City {
-
+public class City implements Parcelable {
 
     @DatabaseField(columnName = "id",generatedId = true)
     private int id;
@@ -53,6 +55,46 @@ public class City {
         this.icon = icon;
         this.country = country;
     }
+
+    protected City(Parcel in) {
+        id = in.readInt();
+        cityName = in.readString();
+        if (in.readByte() == 0) {
+            time = null;
+        } else {
+            time = in.readLong();
+        }
+        description = in.readString();
+        if (in.readByte() == 0) {
+            temperature = null;
+        } else {
+            temperature = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            hunidity = null;
+        } else {
+            hunidity = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            windSpeed = null;
+        } else {
+            windSpeed = in.readDouble();
+        }
+        icon = in.readString();
+        country = in.readString();
+    }
+
+    public static final Creator<City> CREATOR = new Creator<City>() {
+        @Override
+        public City createFromParcel(Parcel in) {
+            return new City(in);
+        }
+
+        @Override
+        public City[] newArray(int size) {
+            return new City[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -124,5 +166,43 @@ public class City {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(cityName);
+        if (time == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(time);
+        }
+        parcel.writeString(description);
+        if (temperature == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(temperature);
+        }
+        if (hunidity == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(hunidity);
+        }
+        if (windSpeed == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(windSpeed);
+        }
+        parcel.writeString(icon);
+        parcel.writeString(country);
     }
 }

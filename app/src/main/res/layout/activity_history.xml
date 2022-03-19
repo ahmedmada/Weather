@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray"
-    tools:context=".presentation.main.MainActivity">
+    tools:context=".presentation.history.HistoryActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -19,15 +19,24 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CITIES"
             android:textStyle="bold"
             android:layout_marginTop="100dp"
             android:layout_marginStart="70dp"
             android:textSize="24sp"
             android:textColor="@color/white"/>
     </androidx.appcompat.widget.Toolbar>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        android:src="@drawable/arrow_back"
+        android:background="@drawable/back_button_bg"
+        android:onClick="closeActivity"
+        tools:ignore="MissingConstraints" />
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/group"
@@ -35,25 +44,15 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cities"
+        android:id="@+id/histories"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/add_city"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        tools:ignore="MissingConstraints"/>
+        tools:ignore="MissingConstraints" />
 
-    <Button
-        android:id="@+id/add_city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/add_button_bg"
-        android:drawableLeft="@drawable/add"
-        android:text="ADD CITY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:onClick="addCity"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

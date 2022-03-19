@@ -2,9 +2,11 @@ package com.app.weather.presentation.main;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.weather.R;
 import com.app.weather.common.ViewDialog;
 import com.app.weather.data.local.City;
+import com.app.weather.presentation.history.HistoryActivity;
 
 import java.util.List;
 
@@ -47,6 +50,12 @@ public class CitiesAdapter extends
         holder.nameTextView.setOnClickListener(view -> {
             ViewDialog.showCityDetailsDialog(activity,city);
         });
+
+        holder.info.setOnClickListener(view -> {
+            Intent i = new Intent(activity, HistoryActivity.class);
+            i.putExtra("city", city);
+            activity.startActivity(i);
+        });
     }
 
     @Override
@@ -56,12 +65,14 @@ public class CitiesAdapter extends
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameTextView;
+        private TextView nameTextView;
+        private ImageView info;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            nameTextView = itemView.findViewById(R.id.contact_name);
+            nameTextView = itemView.findViewById(R.id.city_name);
+            info = itemView.findViewById(R.id.info);
         }
     }
 }
