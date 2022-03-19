@@ -2,6 +2,7 @@
 package com.app.weather.domain.model.city_details;
 
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -46,6 +47,7 @@ public class CityDetails {
     @SerializedName("cod")
     @Expose
     private Integer cod;
+
 
     public Coord getCoord() {
         return coord;
