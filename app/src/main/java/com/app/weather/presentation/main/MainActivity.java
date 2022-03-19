@@ -1,71 +1,118 @@
 package com.app.weather.presentation.main;
 
+import static com.app.weather.common.Constants.cities_list;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
 import com.app.weather.R;
+import com.app.weather.common.Utils;
 import com.app.weather.data.local.City;
 import com.app.weather.data.local.DBHelper;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private DBHelper dbHelper;
     private MainActivityViewModel dashboardViewModel;
+    RecyclerView recycler_cities;
+    CitiesAdapter adapter = null;
+    BottomSheetDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         dashboardViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         dbHelper = new DBHelper(this);
+        dashboardViewModel.initCityDetails();
 
-        dashboardViewModel.getCityByName("Paris");
+        initBotomSheet();
+        initRecycler();
+
+    }
+
+    private void initBotomSheet() {
+        dialog = new BottomSheetDialog(this, R.style.BottomSheetMainStyle);
+        dialog.setContentView(R.layout.botom_sheet);
+
+        initAutoComplete();
+    }
+
+    private void initAutoComplete() {
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, cities_list);
+        AutoCompleteTextView autotextView = dialog.findViewById(R.id.cities_list);
+
+        autotextView.setAdapter(dropdownAdapter);
+        autotextView.setOnItemClickListener((adapterView, view, i, l) -> {
+            Toast.makeText(MainActivity.this, cities_list[i], Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+            dashboardViewModel.getCityByName(autotextView.getText().toString());
+            getNewCity();
+            autotextView.setText("");
+        });
+    }
+
+    private void getNewCity() {
         dashboardViewModel.getCityDetails().observe(this, details -> {
-            Log.v("aaaaaaa","getCityDetails");
 
             if (details != null) {
-                Log.v("aaaaaaa","getBase = "+details.getBase());
-                Log.v("aaaaaaa","getName = "+details.getName());
-//                Log.v("aaaaaaa","getClouds = "+details.getClouds());
-//System.currentTimeMillis()
                 try {
-//                    City city = new City();
-//                    city.setCityName("test");
-//                        public City(int id, String cityName, Long time, String description, String temperature, String hunidity, String windSpeed, String icon, String country) {
 
+                    dbHelper.createOrUpdate(
+                            new City(details.getName(),
+                                    System.currentTimeMillis(),
+                                    details.getWeather().get(0).getMain(),
+                                    details.getMain().getTemp(),
+                                    details.getMain().getHumidity(),
+                                    details.getWind().getSpeed(),
+                                    details.getWeather().get(0).getIcon(),
+                                    details.getSys().getCountry())
+                    );
 
-
-                        dbHelper.createOrUpdate(
-                                new City(details.getName(),
-                                        System.currentTimeMillis(),
-                                        details.getWeather().get(0).getMain(),
-                                        details.getMain().getTemp(),
-                                        details.getMain().getHumidity(),
-                                        details.getWind().getSpeed(),
-                                        details.getWeather().get(0).getIcon(),
-                                        details.getSys().getCountry())
-                        );
+                    refreshRecycler();
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
-
-                try {
-                    Log.v("aaaaaaa","dbHelper.getAll(City.class) length = "+dbHelper.getAll(City.class).size());
-                    Log.v("aaaaaaa","dbHelper.getAll(City.class) city name = "+dbHelper.getAll(City.class).get(0).getCityName());
-
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-//                System.out.println(deals.get(0).toString());
-//                    textView.setText(deals.get(0).toString());
             }
         });
 
     }
+
+    private void initRecycler() {
+        recycler_cities = findViewById(R.id.cities);
+
+        refreshRecycler();
+
+        recycler_cities.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void refreshRecycler() {
+
+        try {
+            adapter = new CitiesAdapter(Utils.removeDuplicates(dbHelper.getAll(City.class)),this);
+            recycler_cities.setAdapter(adapter);
+        } catch (Exception throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void addCity(View view) {
+        dialog.show();
+    }
+
+
 }

@@ -12,21 +12,15 @@ import com.app.weather.domain.model.city_details.CityDetails;
 
 public class MainActivityViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
-    private Repository repository;
     private MutableLiveData<CityDetails> cityDetailsMutableLiveData = null;
 
-    public void getCityByName(String cityName) {
-        Log.v("aaaaaaa","init");
-        if(this.cityDetailsMutableLiveData == null) {
-            Log.v("aaaaaaa","this.cityDetailsMutableLiveData == null");
-            this.repository = Repository.getInstance();
-            this.cityDetailsMutableLiveData = this.repository.getCityDetails(cityName);
-        }
+    public void initCityDetails(){
+        if(this.cityDetailsMutableLiveData == null)
+            cityDetailsMutableLiveData = new MutableLiveData<>();
     }
 
-    public MainActivityViewModel() {
-        this.mText = new MutableLiveData<>();
+    public void getCityByName(String cityName) {
+        this.cityDetailsMutableLiveData = Repository.getInstance().getCityDetails(cityName);
     }
 
     public LiveData<CityDetails> getCityDetails() {

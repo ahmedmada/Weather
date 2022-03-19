@@ -9,4 +9,8 @@ public class Constants {
     public static final String CITY_NAME = "q";
     public static final String AND = "&";
     public static final String CITY_SEARCH = "data/2.5/weather?";
+    public static final String[] cities_list = new String[] {
+            "London", "Vienna", "Paris"
+    };
+
 }

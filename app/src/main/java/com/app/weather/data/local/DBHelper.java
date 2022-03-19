@@ -19,7 +19,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
 
     // Fields
 
-    public static final String DB_NAME = "city.db";
+    public static final String DB_NAME = "city_list.db";
     private static final int DB_VERSION = 1;
 
     // Public methods
